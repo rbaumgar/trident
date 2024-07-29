@@ -13,15 +13,18 @@ get AWS credentials from demo env and login.
 got to
 https://console.aws.amazon.com/fsx/home [check correct region!]
 
+
+```
 select: Amazon FSx for NetApp ONTAP
-- next
+- click "next"
 Quick create
 File system name: cnv-fsx
 Deployment type: Single-AZ
 SSD: 1024 [GB]
 Virtual Private Cloud: rosa-.....-vpc
 Storage efficiency: enabled (recommended)
-- Create file system
+- click "Create file system"
+```
 
 Will take 30-45 minutes.
 
@@ -42,10 +45,11 @@ Edit "DefaultSG", remove inbound rules, update outbound rules to "0.0.0.0/16"
 
 Examples Create your first NFS backends for Trident & Storage Classes for Kubernetes, https://github.com/YvosOnTheHub/LabNetApp/tree/master/Kubernetes_v5/Scenarios/Scenario02
 
-Deploy Astra Trident Operator on the OpenShift console.
+Deploy *Astra Trident Operator* on the OpenShift console.
 
 ## Create Trident Orchestrator
 
+```
 apiVersion: trident.netapp.io/v1
 kind: TridentOrchestrator
 metadata:
@@ -60,12 +64,14 @@ spec:
   k8sTimeout: 30
   kubeletDir: /var/lib/kubelet
   silenceAutosupport: false
-
+```
 
 ## Create Trident Backend Config
 
 dataLIF and managementLIF can be found at Storage virtual machines, Endpoints, Management DNS name
 
+
+```
 apiVersion: trident.netapp.io/v1
 kind: TridentBackendConfig
 metadata:
@@ -82,6 +88,7 @@ spec:
   autoExportCIDRs:
     - 10.0.0.0/16
   backendName: nas-default
+```
 
 Annotation: useRest=true slow!
 
@@ -89,6 +96,8 @@ Annotation: useRest=true slow!
 
 SVMAdmin username and password can be found at Storage virtual machines, Administration, Update!
 
+
+```
 apiVersion: v1
 kind: Secret
 metadata:
@@ -97,9 +106,11 @@ type: Opaque
 stringData:
   username: vsadmin
   password: SVMAdmin1
+```
 
 ## Create Storage Class
 
+```
 kind: StorageClass
 apiVersion: storage.k8s.io/v1
 metadata:
@@ -110,12 +121,17 @@ parameters:
   csi.storage.k8s.io/fstype: “nfs”
 allowVolumeExpansion: true
 volumeBindingMode: Immediate
+```
 
 Attantion: If you have Multiple TridentBackendConfigs add storagePool, eg "cnv = backendName
+
+```
   storagePools: 'cnv:.*'
+```
 
 ## Create a demo PVC
 
+```
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
@@ -128,16 +144,21 @@ spec:
     requests:
       storage: 1Gi
   storageClassName: trident-csi-fsx
+```
 
 
 ## (optional) make default storage class!
 
+```
 add annotation to the storageClass:
   annotations:
     storageclass.kubernetes.io/is-default-class: 'true'
+```
 
 ## (debug) Trident controller logs
 
+```
 oc logs deploy/trident-controller -n trident
+```
 
 If you need more details, update TridentOrchestrator debug:true.
