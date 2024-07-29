@@ -162,3 +162,7 @@ oc logs deploy/trident-controller -n trident
 ```
 
 If you need more details, update TridentOrchestrator debug:true.
+
+## Lab Guide
+
+https://redhat-gpst.github.io/rosa-fsx-lab-guide/modules/index.html
