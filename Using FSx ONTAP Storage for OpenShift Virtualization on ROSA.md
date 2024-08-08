@@ -47,6 +47,28 @@ Examples Create your first NFS backends for Trident & Storage Classes for Kubern
 
 Deploy *Astra Trident Operator* on the OpenShift console.
 
+Or by applying the following yaml.
+
+```
+apiVersion: project.openshift.io/v1
+kind: Project
+metadata:
+  name: trident
+---
+apiVersion: operators.coreos.com/v1alpha1
+kind: Subscription
+metadata:
+  name: trident-operator
+  namespace: trident
+spec:
+  channel: stable
+  installPlanApproval: Automatic
+  name: trident-operator
+  source: community-operators
+  sourceNamespace: openshift-marketplace
+  startingCSV: trident-operator.v24.6.0
+```  
+
 ## Create Trident Orchestrator
 
 ```
